@@ -1,0 +1,11 @@
+{{#if current-user}}
+  <span>__USER INITIALS__</span>
+  <span>current_user: {{ current-user }}</span>
+{{else}}
+  <span>Check in</span>
+{{/if}}
+<span>I'm currently in</span>
+<span>__TIMEZONE SELECTOR__</span>
+
+{{team-view}}
+{{outlet}}
