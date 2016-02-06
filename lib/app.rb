@@ -11,10 +11,6 @@ class App < Sinatra::Base
     3 => {id: 3, first_name: 'JarJar', last_name: 'Binks', timezone: @@times[2], color: '#c6c'}
   }
 
-  get '/' do
-    'Hello World'
-  end
-
   get '/socket' do
     if request.websocket?
       request.websocket do |ws|
@@ -26,19 +22,23 @@ class App < Sinatra::Base
 
         ws.onmessage do |msg|
           data = JSON.parse(msg)
-          if data.type == 'create'
-            name_array = data.name.split(' ')
-            if @@times.include? data.timezone && name_array.length >= 2
+          if data['type'] == 'create'
+            colors = ['6', '9', 'c', 'f']
+            name_array = data['name'].split(' ')
+            if (@@times.include? data['timezone']) && name_array.length >= 2
               user_data = {
+                id: @@teams_cache.length + 1,
                 first_name: name_array[0],
                 last_name: name_array[-1],
-                color: data.color,
-                id: @@teams_cache.length + 1
+                color: data['color'] || '#'.concat(colors.sample(3).join('')),
+                timezone: data['timezone']
               }
-              @@teams_cache[user_data.id] = user_data
+              @@teams_cache[user_data[:id]] = user_data
             end
-          elsif data.type == 'update'
-
+            response = {type: 'identity', data: user_data}
+            ws.send(JSON.dump(response))
+          elsif data['type'] == 'update'
+            @@teams_cache[data['id']] = data
           end
           publish_to_sockets
         end
@@ -49,30 +49,6 @@ class App < Sinatra::Base
 
       end
     end
-  end
-
-  def get_teams
-    teams = []
-
-    timezoned_users = Array.new {|h,k| h[k] = {}}
-    @@teams_cache.values.each do |user|
-      separated_teams[user.timezone][:users] <<
-      teams << { timezone: timezone, users: users }
-    end
-    #teams: [
-    #  {
-    #    timezone: <string>,
-    #    users: [
-    #       {first_name, last_name, color, id}
-    #    ]
-    #  }
-    #]
-
-    message = {
-      type: 'teams-fetch-all',
-      teams: teams
-    }
-    return message
   end
 
   def publish_to_sockets

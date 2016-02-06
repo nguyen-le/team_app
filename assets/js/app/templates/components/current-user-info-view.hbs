@@ -1,12 +1,15 @@
 {{#if user}}
-  <div style="width:30%;">
-    {{initials}}
+  <div style="display:inline-block; padding-left: 25px; width:25%;">
+    <span
+      class="mui-btn--fab mui--text-subhead mui--text-dark-hint"
+      style="background-color:{{color}}; padding:10px; font-weight:bold;">
+      {{initials}}</span>
   </div>
   <div style="display:inline-block; width:70%;">
     <span>I'm currently in</span>
-    <select style="display:block; background:white; border:0;">
+    <select style="display:block; background:white; border:0;" onchange={{action "onUpdate"}}>
       <option>America/Los Angeles</option>
-      <option>America/Dallas</option>
+      <option>America/Chicago</option>
       <option>America/Montreal</option>
       <option>Europe/London</option>
     </select>

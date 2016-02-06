@@ -4,7 +4,7 @@ use Rack::Static,
   index: 'index.html'
 
 use Rack::Static,
-  urls: ['/js', '/css'],
+  urls: ['/assets'],
   root: 'public'
 
 

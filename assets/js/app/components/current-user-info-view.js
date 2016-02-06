@@ -2,29 +2,59 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   init: function() {
-    const user = localStorage.getItem('user');
+    let user;
+    if (this.get('user')) {
+      user = this.get('user');
+    } else {
+      user = JSON.parse(localStorage.getItem('user'));
+    }
 
     this._super();
     this.setProperties({user: user});
-    this.set('color', this.color());
   },
 
-  color: function () {
-  },
+  color: function() {
+    return this.get('user').color;
+  }.property('color'),
 
-  user: function() {
-    return this.get('user');
-  },
+  initials: function() {
+    const names = this.get('user');
+    return names.first_name[0] + names.last_name[0];
+  }.property('user'),
 
   actions: {
-    onSubmit() {
-      const user = this.get('user');
-      const payload = {
-        type: 'update',
-        timezone: user.timezone
+    onSubmit(event) {
+      event.preventDefault();
+      const name = event.target[0].value;
+      const timezone = event.target[1].value;
+      const safeColors = ['6','9','c','f'];
+      const rand = function() {
+        return Math.floor(Math.random() * 4);
       };
-      this.get('websocket').send(JSON.stringify(payload));
+      const randomColor = function() {
+        const r = safeColors[rand()];
+        const g = safeColors[rand()];
+        const b = safeColors[rand()];
+        return '#' + r + g + b;
+      };
+      const color = randomColor();
+      const user = {
+        name: name,
+        timezone: timezone,
+        color: color
+      };
+      const data = Object.assign({}, user, {type: 'create'});
+      this.get('websocket').send(JSON.stringify(data));
+    },
+    onUpdate(event) {
+      const timezone = event.target.value;
+      const user = Object.assign({}, this.get('user'), {timezone: timezone});
+      const data = Object.assign({}, user, {type: 'update'});
+
+      const payload = JSON.stringify(data);
+      this.get('websocket').send(payload);
+      localStorage.setItem('user', JSON.stringify(user));
+      this.set('user', user);
     }
   }
-
 });

@@ -4,13 +4,14 @@ export default Ember.Component.extend({
   init: function() {
     this._super.apply(this, arguments);
 
+    //this.ws = new WebSocket('ws://' + location.host + '/socket');
     this.ws = new WebSocket('ws://localhost:3000/socket');
     this.ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'refresh') {
+      const response = JSON.parse(event.data);
+      if (response.type === 'refresh') {
         let teams = [];
         let timezones = {};
-        data.data.forEach((user) => {
+        response.data.forEach((user) => {
           if (timezones[user.timezone] === undefined) {
             timezones[user.timezone] = {timezone: user.timezone, users: []};
           }
@@ -19,9 +20,15 @@ export default Ember.Component.extend({
         for (let timezone in timezones) {
           teams.push(timezones[timezone]);
         }
-        window.e = teams;
+        if (response.data.length === 3) {
+          localStorage.clear();
+        }
         this.set('teams', teams);
+      } else if (response.type === 'identity') {
+        localStorage.setItem('user', JSON.stringify(response.data));
+        this.set('user', response.data);
       }
+      this.rerender();
     };
   }
 

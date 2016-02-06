@@ -2,24 +2,10 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   color: function () {
-    let color;
     const user = this.get('user');
-    if (user.color) {
-      color = user.color;
-    } else {
-      const safeColors = ['66','99','cc','ff'];
-      const rand = function() {
-        return Math.floor(Math.random() * 4);
-      };
-      const randomColor = function() {
-        const r = safeColors[rand()];
-        const g = safeColors[rand()];
-        const b = safeColors[rand()];
-        return '#' + r + g + b;
-      };
-      color = randomColor();
+    if (user) {
+      return user.color;
     }
-    return color;
   }.property('color'),
 
   initials: function() {
