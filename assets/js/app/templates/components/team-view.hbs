@@ -1,4 +1,9 @@
-<h2>team view</h2>
+{{current-user-info-view websocket=ws}}
 {{#each teams as |team|}}
-  {{user-group team=team}}
+  <div class="mui-panel" style="margin-top:30px; padding-left:30px; border-radius:5px;">
+    {{time-view timezone=team.timezone}}
+    {{#each team.users as |user|}}
+      {{user-view user=user}}
+    {{/each}}
+  </div>
 {{/each}}

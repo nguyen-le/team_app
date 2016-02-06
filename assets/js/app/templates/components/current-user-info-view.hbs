@@ -1,0 +1,28 @@
+{{#if user}}
+  <div style="width:30%;">
+    {{initials}}
+  </div>
+  <div style="display:inline-block; width:70%;">
+    <span>I'm currently in</span>
+    <select style="display:block; background:white; border:0;">
+      <option>America/Los Angeles</option>
+      <option>America/Dallas</option>
+      <option>America/Montreal</option>
+      <option>Europe/London</option>
+    </select>
+  </div>
+{{else}}
+  <form class="mui-form--inline" onSubmit={{action "onSubmit"}}>
+    <span class="mui-textfield" style="width:30%">
+      <input class="mui--text-center" type="text" autofocus>
+    </span>
+    <span class="mui--text-caption mui--text-dark-hint">CURRENTLY IN</span>
+    <select style="background:white; border:0; height:30px;">
+      <option>America/Los Angeles</option>
+      <option>America/Dallas</option>
+      <option>America/Montreal</option>
+      <option>Europe/London</option>
+    </select>
+    <input class="mui-btn mui-btn-raised mui-btn--small mui-btn--primary" type="submit" value="Check in">
+  </form>
+{{/if}}

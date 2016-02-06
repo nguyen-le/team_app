@@ -8,5 +8,5 @@ use Rack::Static,
   root: 'public'
 
 
-require './app'
+require './lib/app'
 run App
